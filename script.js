@@ -358,5 +358,5 @@ async function runGame(plans, Display) {
   console.log("You've won!");
 }
 function skiplevel() {
- set status= 1; 
+ status = "won";
 }
