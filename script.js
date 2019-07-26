@@ -37,7 +37,7 @@ static start(level){
   return new State(level, level.startAcross, "playing");
 }
 get player () {
-  return.this.actors.find(a=> a.type == "player");
+  return this.actors.find(a=> a.type == "player");
     }
   }
   
