@@ -1,6 +1,6 @@
-let simpleLevelPlan = `
+var simpleLevelPlan = `
 ......................
-..#........#.......#..
+..#................#..
 ..#..............=.#..
 ..#.........o.o....#..
 ..#.@......#####...#..
@@ -8,14 +8,14 @@ let simpleLevelPlan = `
 ......#++++++++++++#..
 ......##############..
 ......................`;
- 
- class Level {
+
+var Level = class Level {
   constructor(plan) {
     let rows = plan.trim().split("\n").map(l => [...l]);
     this.height = rows.length;
     this.width = rows[0].length;
     this.startActors = [];
-    
+
     this.rows = rows.map((row, y) => {
       return row.map((ch, x) => {
         let type = levelChars[ch];
@@ -27,21 +27,24 @@ let simpleLevelPlan = `
     });
   }
 }
-class State {
-constructor (level,actors,status){
-  this.level= level
-  this.actors = actors
-  this.status = status
-}
-static start(level){
-  return new State(level, level.startAcross, "playing");
-}
-get player () {
-  return this.actors.find(a=> a.type == "player");
-    }
+
+var State = class State {
+  constructor(level, actors, status) {
+    this.level = level;
+    this.actors = actors;
+    this.status = status;
   }
-  
-  class Vec {
+
+  static start(level) {
+    return new State(level, level.startActors, "playing");
+  }
+
+  get player() {
+    return this.actors.find(a => a.type == "player");
+  }
+}
+
+var Vec = class Vec {
   constructor(x, y) {
     this.x = x; this.y = y;
   }
@@ -52,7 +55,8 @@ get player () {
     return new Vec(this.x * factor, this.y * factor);
   }
 }
-class Player {
+
+var Player = class Player {
   constructor(pos, speed) {
     this.pos = pos;
     this.speed = speed;
@@ -68,7 +72,7 @@ class Player {
 
 Player.prototype.size = new Vec(0.8, 1.5);
 
-class Lava {
+var Lava = class Lava {
   constructor(pos, speed, reset) {
     this.pos = pos;
     this.speed = speed;
@@ -90,7 +94,7 @@ class Lava {
 
 Lava.prototype.size = new Vec(1, 1);
 
-class Coin {
+var Coin = class Coin {
   constructor(pos, basePos, wobble) {
     this.pos = pos;
     this.basePos = basePos;
@@ -108,14 +112,13 @@ class Coin {
 
 Coin.prototype.size = new Vec(0.6, 0.6);
 
-const levelChars = {
+var levelChars = {
   ".": "empty", "#": "wall", "+": "lava",
   "@": Player, "o": Coin,
   "=": Lava, "|": Lava, "v": Lava
 };
 
-let simpleLevel = new Level(simpleLevelPlan);
-console.log(`${simpleLevel.width} by ${simpleLevel.height}`);
+var simpleLevel = new Level(simpleLevelPlan);
 
 function elt(name, attrs, ...children) {
   let dom = document.createElement(name);
@@ -128,7 +131,7 @@ function elt(name, attrs, ...children) {
   return dom;
 }
 
-class DOMDisplay {
+var DOMDisplay = class DOMDisplay {
   constructor(parent, level) {
     this.dom = elt("div", {class: "game"}, drawGrid(level));
     this.actorLayer = null;
@@ -138,7 +141,7 @@ class DOMDisplay {
   clear() { this.dom.remove(); }
 }
 
-const scale = 20;
+var scale = 20;
 
 function drawGrid(level) {
   return elt("table", {
@@ -193,6 +196,7 @@ DOMDisplay.prototype.scrollPlayerIntoView = function(state) {
     this.dom.scrollTop = center.y + margin - height;
   }
 };
+
 Level.prototype.touches = function(pos, size, type) {
   var xStart = Math.floor(pos.x);
   var xEnd = Math.ceil(pos.x + size.x);
@@ -259,7 +263,7 @@ Lava.prototype.update = function(time, state) {
   }
 };
 
-const wobbleSpeed = 8, wobbleDist = 0.07;
+var wobbleSpeed = 8, wobbleDist = 0.07;
 
 Coin.prototype.update = function(time) {
   let wobble = this.wobble + time * wobbleSpeed;
@@ -268,9 +272,9 @@ Coin.prototype.update = function(time) {
                   this.basePos, wobble);
 };
 
-const playerXSpeed = 7;
-const gravity = 30;
-const jumpSpeed = 17;
+var playerXSpeed = 7;
+var gravity = 30;
+var jumpSpeed = 17;
 
 Player.prototype.update = function(time, state, keys) {
   let xSpeed = 0;
@@ -293,6 +297,7 @@ Player.prototype.update = function(time, state, keys) {
   }
   return new Player(pos, new Vec(xSpeed, ySpeed));
 };
+
 function trackKeys(keys) {
   let down = Object.create(null);
   function track(event) {
@@ -306,21 +311,8 @@ function trackKeys(keys) {
   return down;
 }
 
-const arrowKeys =
+var arrowKeys =
   trackKeys(["ArrowLeft", "ArrowRight", "ArrowUp"]);
-
-function runAnimation(frameFunc) {
-  let lastTime = null;
-  function frame(time) {
-    if (lastTime != null) {
-      let timeStep = Math.min(time - lastTime, 100) / 1000;
-      if (frameFunc(timeStep) === false) return;
-    }
-    lastTime = time;
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-}
 
 function runAnimation(frameFunc) {
   let lastTime = null;
@@ -357,7 +349,6 @@ function runLevel(level, Display) {
   });
 }
 
-
 async function runGame(plans, Display) {
   for (let level = 0; level < plans.length;) {
     let status = await runLevel(new Level(plans[level]),
@@ -366,4 +357,3 @@ async function runGame(plans, Display) {
   }
   console.log("You've won!");
 }
-
