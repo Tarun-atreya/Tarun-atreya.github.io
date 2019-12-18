@@ -1,0 +1,21 @@
+<!DOCTYPE htm
+
+l>
+<html>
+  <head>
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet'>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>repl.it</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <script src="script.js"></script>
+   <div align="left"><p id="head">Yellow Click</p>
+   <div align="middle"> <p id= "head2">H</p>
+   <div align="middle"> <p id= "head3">E</p>
+   <div align="middle"> <p id= "head4">L</p>
+   <div align="middle"> <p id= "head5">L</p>
+   <div align="middle"> <p id= "head6">O</p>
+  </body>
+</html>
